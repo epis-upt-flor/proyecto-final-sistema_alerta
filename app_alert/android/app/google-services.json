@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "496828677813",
+    "project_id": "sis-alert-1e7a7",
+    "storage_bucket": "sis-alert-1e7a7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:496828677813:android:6bae9b32e587b08cdb48fc",
+        "android_client_info": {
+          "package_name": "com.example.app_alert"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoduw8YKW5JWArWZH2dETSElxWEuETF_I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
