@@ -1,5 +1,6 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get, Req, UseGuards } from '@nestjs/common';
 import { RegistrarAlertaUseCase } from '../../application/registrar-alerta.usecase';
+import { FirebaseAuthGuard } from '../../infrastructure/auth/firebase-auth.guard';
 
 @Controller('alerta')
 export class AlertaController {
@@ -60,5 +61,12 @@ export class AlertaController {
 
     await this.registrarAlerta.ejecutar(alerta);
     return { mensaje: 'Alerta LoraWAN recibida correctamente' };
+  }
+
+  @UseGuards(FirebaseAuthGuard)
+  @Get('cantidad')
+  async cantidadAlertas(@Req() req) {
+    console.log('Usuario autenticado:', req.user); // Aquí puedes ver los datos del usuario
+    return { mensaje: "OK", usuario: req.user };
   }
 }
