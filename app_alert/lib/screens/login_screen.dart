@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
+import 'package:app_alert/screens/mapa_screen.dart'; // Importa la pantalla del mapa
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -26,16 +27,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (token != null) {
         final response = await http.get(
-          Uri.parse('https://46ebf95be03e.ngrok-free.app/alerta/cantidad'), // Cambia por tu URL real
+          Uri.parse('https://8af58d3e7cde.ngrok-free.app/alerta/cantidad'), // Cambia por tu URL real
           headers: {
             'Authorization': 'Bearer $token',
           },
         );
 
-        if (!mounted) return; // <<--- Corrección importante
+        if (!mounted) return;
         if (response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Login exitoso y token enviado al servidor')),
+          // En vez de solo mostrar Snackbar, navega a la pantalla del mapa
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MapaScreen()),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -44,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       }
     } catch (e) {
-      if (!mounted) return; // <<--- Corrección importante
+      if (!mounted) return;
       setState(() {
         errorMessage = 'Credenciales incorrectas o error de conexión';
       });
