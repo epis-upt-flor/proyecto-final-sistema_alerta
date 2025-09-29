@@ -3,7 +3,6 @@ src/
  │   ├── entities/                 # Entidades de negocio
  │   │    ├── alerta.entity.ts
  │   ├── value-objects/            # Reglas inmutables del dominio
- │   │    └── alerta-id.vo.ts
  │   └── ports/                    # Interfaces (contratos)
  │        ├── alerta-repository.port.ts
  │
@@ -12,20 +11,19 @@ src/
  │
  ├── infrastructure/               # Implementaciones técnicas
  │   ├── persistence/              # DB adapters
- │   │    └── alerta-repository.inmemory.ts
+ │   │    └── alerta-repository.firestore.ts
  │   ├── communication/            # LoRaWAN, SMS, Email, etc.
- │   │    └── lorawan.adapter.ts
  │   ├── auth/                     # Seguridad
- │   │    └── jwt.strategy.ts
+ |        └── firebase-auth.guard.ts
+ |        └── firebase-auth.service.ts
  │   └── services/                 # Implementación de puertos
- │
+ │        └── validador-datos.service.ts
  ├── interface/                    # Entrada/Salida (controladores)
  │   └── rest/
  │        ├── alerta.controller.ts
  │
  ├── app.module.ts                 # Configuración raíz de Nest
  └── main.ts                       # Bootstrap
-
 
 
  -----------------------------------------------------------
