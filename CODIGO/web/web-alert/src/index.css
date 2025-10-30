@@ -1,0 +1,471 @@
+:root {
+  --primary: #EF4444;
+  --sidebar-bg: #1F2937;
+  --sidebar-width: 280px;
+  --card-radius: 16px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #F3F4F6;
+  margin: 0;
+}
+
+/* sidebar  */
+.sidebar-mini {
+  width: 72px;
+  background: var(--sidebar-bg, #1F2937);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 rem 0;
+  position: relative;
+  box-shadow: 2px 0 8px #0001;
+  z-index: 50;
+}
+
+.sidebar-mini__logo {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.sidebar-mini__nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+  width: 100%;
+  align-items: center;
+}
+
+.sidebar-mini__icon {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  background: none;
+}
+
+.sidebar-mini__icon:hover,
+.sidebar-mini__icon.active {
+  background: var(--primary, #EF4444);
+}
+
+.sidebar-mini__icon svg {
+  color: #fff;
+}
+
+.mini-badge {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 10px;
+  border-radius: 8px;
+  padding: 2px 6px;
+  font-weight: 600;
+}
+
+.sidebar-mini__bottom {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.avatar-mini {
+  width: 38px;
+  height: 38px;
+  background: var(--primary, #EF4444);
+  color: #fff;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 38px;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+.logout-mini {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 3rem;
+}
+/* sidebar fin */
+
+/* sidebar panel */
+.sidebar-panel-float {
+  position: absolute;
+  left: 72px;
+  top: 32px;
+  /* bottom: 0; */
+  width: 380px;
+  background: transparent; /* <--- sin fondo */
+  box-shadow: none; /* <--- sin sombra */
+  border-radius: 0;
+  transition: transform 0.25s;
+  transform: translateX(-120%);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  pointer-events: auto; /* para que solo los cards sean interactuables */
+  z-index: 120;
+}
+
+.sidebar-panel-float.open {
+  transform: translateX(0);
+}
+.sidebar-panel-close {
+  border: none;
+  background: none;
+  font-size: 2rem;
+  color: #888;
+  align-self: flex-end;
+  margin: 0.5rem 1rem 0 0;
+  cursor: pointer;
+}
+.sidebar-panel-content {
+  flex: 1;
+  padding: 0 1.5rem 0 1.5rem;
+  overflow-y: auto;
+}
+/* sidebar panel fin */
+
+.profile {
+  display: flex;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.profile .avatar {
+  width: 40px;
+  height: 40px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 40px;
+  font-weight: bold;
+  margin-right: 0.75rem;
+}
+
+.dashboard-header {
+  padding: 2rem 2rem 1rem 2rem;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px #0001;
+}
+
+.dashboard-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1F2937;
+}
+
+.cards-row {
+  display: flex;
+  gap: 1.5rem;
+  margin: 2rem 2rem 1rem 0.5rem; /* Solo 0.5rem a la izquierda */
+}
+
+.card {
+  flex: 1;
+  background: #fff;
+  border-radius: var(--card-radius);
+  box-shadow: 0 2px 8px #0001;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.card-title {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.card-value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1F2937;
+}
+
+.alerts-area {
+  padding: 2rem;
+  flex: 1;
+  display: flex;
+  gap: 2rem;
+}
+
+.alerts-list {
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.alert-card {
+  background: #fff;
+  border-radius: var(--card-radius);
+  box-shadow: 0 2px 8px #0001;
+  padding: 1rem 1.25rem;
+  border: 2px solid #fff;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.alert-card.new {
+  border-color: var(--primary);
+  box-shadow: 0 0 8px 0 #ef4444aa;
+}
+
+.alert-card .status {
+  display: inline-block;
+  font-size: 0.7rem;
+  background: #fee2e2;
+  color: #ef4444;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-weight: bold;
+}
+
+.alert-card .alert-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+  color: #1F2937;
+}
+
+.alert-card .alert-address {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.alert-card .alert-time {
+  color: #9ca3af;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.map-area {
+  background: #e0f2f1;
+  border-radius: var(--card-radius);
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: #1F2937;
+  position: relative;
+  min-height: 320px;
+}
+
+/* ==== FORMULARIO REGISTRO DISPOSITIVO ==== */
+.device-form-container {
+  background: #fff;
+  padding: 1.7rem 2rem;
+  border-radius: 18px;
+  box-shadow: 0 4px 32px #0002;
+  max-width: 440px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.device-form-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1F2937;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+.device-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.device-input {
+  padding: 0.5rem;
+  border: 1.5px solid #eee;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border .2s;
+}
+.device-input:focus {
+  outline: none;
+  border-color: var(--primary, #ef4444);
+}
+.device-btn {
+  padding: 0.5rem 0;
+  background: var(--primary, #ef4444);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 0.5rem;
+}
+.device-btn:active {
+  background: #b91c1c;
+}
+.device-success {
+  color: #059669;
+  background: #d1fae5;
+  border-radius: 6px;
+  padding: 0.7rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+.device-error {
+  color: #dc2626;
+  background: #fee2e2;
+  border-radius: 6px;
+  padding: 0.7rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+.device-spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid var(--primary, #ef4444);
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  animation: device-spin 1s linear infinite;
+  margin: 0 auto;
+}
+@keyframes device-spin {
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
+}
+
+/* Nuevo layout para gestión de dispositivos */
+.device-management-area {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 2.5rem;
+  align-items: flex-start;
+  padding: 0 2.5rem 2rem 1rem; /* Menos padding arriba */
+  margin-top: 0; /* <-- Fuerza que esté arriba */
+}
+
+.device-management-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.device-list-card {
+  background: #fff;
+  border-radius: var(--card-radius, 16px);
+  box-shadow: 0 2px 8px #0001;
+  padding: 1.3rem;
+  margin-bottom: 0;
+}
+
+.device-list-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1F2937;
+  margin-bottom: 1rem;
+}
+
+.device-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+
+.device-table th, .device-table td {
+  text-align: left;
+  padding: 0.7rem 0.4rem;
+  border-bottom: 1px solid #eee;
+  font-size: 1rem;
+}
+
+.device-table th {
+  color: #ef4444;
+  font-weight: 700;
+  background: #f9fafb;
+}
+
+.device-table tr:last-child td {
+  border-bottom: none;
+}
+
+.device-management-right {
+  background: #fff;
+  border-radius: var(--card-radius, 16px);
+  box-shadow: 0 2px 8px #0001;
+  padding: 1.7rem 1.5rem;
+  min-width: 340px;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.device-vincular-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1F2937;
+  margin-bottom: 1rem;
+}
+
+.device-vincular-form {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 1.2rem;
+}
+
+.device-victima-card {
+  background: #fee2e2;
+  border: 1.5px solid #ef4444;
+  border-radius: 8px;
+  padding: 1.1rem 1.2rem;
+  margin-top: 1rem;
+}
+
+.device-victima-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.7rem;
+  font-size: 1.08rem;
+  font-weight: bold;
+  color: #ef4444;
+}
+
+@media (max-width: 950px) {
+  .device-management-area {
+    grid-template-columns: 1fr;
+  }
+  .device-management-right {
+    margin-top: 2rem;
+    max-width: 100%;
+  }
+}
+/* Nuevo layout para gestión de dispositivos */
