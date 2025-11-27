@@ -1,0 +1,30 @@
+@startuml Containers
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+LAYOUT_LEFT_RIGHT()
+
+Person(victim, "Víctima / Usuario")
+Person(patrol, "Patrullero / Unidad de Respuesta")
+Person(operator, "Operador / Central")
+
+System_Boundary(sisal, "SISALERT"){
+  Container(scm, "Servidor Central (Backend)", "ASP.NET Web API + SignalR", "Procesa webhooks TTS, gestiona Firestore y notifica a clientes en tiempo real")
+  Container(web, "Aplicación Web (Dashboard)", "React", "Interfaz para operadores: mapas, gestión de dispositivos y alertas")
+  Container(mobile, "Aplicación Móvil (Patrulla)", "Flutter", "App para patrulleros: recibe alertas y reporta ubicación")
+  ContainerDb(firestore, "Firestore", "NoSQL DB", "Almacena usuarios, alertas y ubicaciones")
+  Container_Ext(tts, "The Things Stack (TTS)", "LoRaWAN Network Server / Application Server", "Recibe uplinks desde dispositivos y reenvía a SCM")
+  Container_Ext(googlemaps, "Google Maps API", "API", "Mapas para visualización en web y móvil")
+}
+
+Rel(victim, tts, "Transmite LoRaWAN uplink")
+Rel(tts, scm, "Webhook: reenvía uplinks")
+Rel(scm, firestore, "Lee/Escribe datos en")
+Rel(scm, web, "API + SignalR: Notifica y sirve datos")
+Rel(scm, mobile, "API + SignalR: Notifica y recibe ubicaciones")
+Rel(web, googlemaps, "Usa Google Maps API para mostrar mapas")
+Rel(mobile, googlemaps, "Usa Google Maps API (via plugin) para mostrar mapas")
+
+Rel(operator, web, "Usa")
+Rel(patrol, mobile, "Usa")
+
+SHOW_LEGEND()
+@enduml

@@ -1,0 +1,20 @@
+@startuml WebApp
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+LAYOUT_TOP_DOWN()
+
+Person(operator, "Operador / Central")
+Container(web, "Aplicación Web (React)", "React", "Dashboard para operadores")
+
+Component(ui, "UI Components", "React Components", "MapView, DeviceManagement, Auth/Login")
+Component(signalrClient, "SignalR Client", "JS Library", "Recibe eventos en tiempo real: RecibirAlerta, AlertaTomada")
+Component(firebaseSdk, "Firebase Auth SDK", "Auth SDK", "Usado sólo para autenticación (ID tokens) — las lecturas/escrituras de datos van por el Backend)")
+Component(apiClient, "API Client", "axios/fetch", "Consulta endpoints backend: /api/alerta, /api/device, /api/patrulla")
+
+Rel(operator, ui, "Usa dashboard")
+Rel(ui, signalrClient, "Se suscribe a eventos en tiempo real")
+Rel(ui, firebaseSdk, "Inicia sesión y obtiene token")
+Rel(ui, apiClient, "LLama API backend (con token Firebase)")
+Rel(apiClient, web, "Comunica con backend (API + SignalR)")
+
+SHOW_LEGEND()
+@enduml

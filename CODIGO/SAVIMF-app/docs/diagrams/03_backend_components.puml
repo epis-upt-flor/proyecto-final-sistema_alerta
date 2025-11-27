@@ -1,0 +1,47 @@
+@startuml BackendComponents
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+LAYOUT_TOP_DOWN()
+
+' Declare external dependencies first to avoid name conflicts
+ContainerDb(firestoreDb, "Firestore", "NoSQL DB", "Almacena usuarios, alertas, ubicaciones y TOKENS FCM")
+Container_Ext(tts, "The Things Stack (TTS)", "LoRaWAN NS/AS/JS", "Red LoRaWAN que recibe uplinks y reenvía a través de webhooks")
+Container_Ext(fcm, "Firebase Cloud Messaging", "Push Notification Service", "Servicio de Google para enviar notificaciones push a dispositivos móviles")
+
+' Main container
+Container(scm, "Servidor Central (Backend)", "ASP.NET Web API + SignalR + FCM", "Procesa webhooks desde TTS, valida tokens Firebase, persiste en Firestore, notifica via SignalR y ENVÍA PUSH NOTIFICATIONS via FCM")
+
+' Components inside backend container
+Component(alarmCtrl, "AlertaController", "API Controller", "Endpoint /api/alerta - procesa webhooks, decodifica payload, registra alertas y ENVÍA NOTIFICACIONES PUSH FCM")
+Component(deviceCtrl, "DeviceController", "API Controller", "Endpoint /api/device - registra dispositivos en TTS y consulta dispositivos")
+Component(patrullaCtrl, "PatrullaController", "API Controller", "Endpoint /api/patrulla - recibe ubicaciones y expone ubicaciones de patrullas")
+Component(authCtrl, "AuthController", "API Controller", "Endpoint /api/auth - login con token Firebase")
+Component(userCtrl, "UserController", "API Controller", "Endpoint /api/user/fcm-token - REGISTRA TOKENS FCM de patrulleros")
+
+Component(ttsService, "TTSDeviceService", "Service", "Servicio que llama las APIs de The Things Stack para registrar/listar dispositivos")
+Component(authService, "FirebaseAuthService", "Service", "Verifica ID tokens con Firebase Admin SDK y obtiene UID/email")
+Component(fcmService, "FCMService", "Service", "SERVICIO FCM - Envía notificaciones push usando Firebase Admin SDK a tokens de patrulleros")
+Component(signalrHub, "AlertaHub (SignalR)", "Realtime Hub", "Publica eventos en tiempo real: RecibirAlerta, AlertaTomada, AlertaEstadoCambiado")
+
+Component(repoAlert, "AlertaRepositoryFirestore", "Repository", "Persistencia para alertas en Firestore")
+Component(userRepo, "UserRepositoryFirestore", "Repository", "CRUD usuarios + OBTIENE TOKENS FCM por rol 'patrullero'")
+Component(repoPatrulla, "PatrullaRepositoryFirestore", "Repository", "Persistencia de ubicaciones de patrullas en Firestore")
+
+' Relationships
+Rel(alarmCtrl, repoAlert, "Guarda y consulta alertas")
+Rel(alarmCtrl, signalrHub, "Publica eventos de alerta")
+Rel(alarmCtrl, userRepo, "OBTIENE TOKENS FCM de patrulleros")
+Rel(alarmCtrl, fcmService, "ENVÍA NOTIFICACIONES PUSH")
+Rel(userCtrl, userRepo, "REGISTRA TOKEN FCM del patrullero")
+Rel(fcmService, fcm, "Envía push notifications")
+Rel(deviceCtrl, ttsService, "Invoca para registrar dispositivos en TTS")
+Rel(patrullaCtrl, repoPatrulla, "Guarda ubicaciones")
+Rel(authCtrl, authService, "Verifica tokens Firebase")
+
+Rel(repoAlert, firestoreDb, "Lee/Escribe alertas")
+Rel(userRepo, firestoreDb, "Lee/Escribe usuarios + TOKENS FCM")
+Rel(repoPatrulla, firestoreDb, "Lee/Escribe ubicaciones")
+
+Rel(scm, tts, "Recibe webhooks desde TTS / consulta device list")
+
+SHOW_LEGEND()
+@enduml

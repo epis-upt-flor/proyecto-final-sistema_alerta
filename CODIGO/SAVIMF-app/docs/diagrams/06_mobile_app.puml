@@ -1,0 +1,21 @@
+@startuml MobileApp
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+LAYOUT_TOP_DOWN()
+
+Person(patrol, "Patrullero / Unidad de Respuesta")
+Container(mobile, "Aplicación Móvil (Flutter)", "Flutter", "App de patrulla para recibir alertas y reportar ubicación")
+
+Component(login, "Login (Firebase)", "Firebase Auth SDK", "Inicia sesión y obtiene token")
+Component(mapView, "Mapa (google_maps_flutter)", "UI", "Muestra alertas y patrullas en tiempo real")
+Component(locationService, "Location Sender", "Geolocator + Timer", "Envia ubicación al backend cada N segundos")
+Component(signalrClient, "SignalR Client", "Dart SignalR lib", "Recibe eventos en tiempo real y actualiza UI")
+Component(apiClient, "API Client", "http package", "Consume endpoints backend para tomar/cambiar estado de alertas")
+
+Rel(patrol, login, "Inicia sesión")
+Rel(login, apiClient, "Provee token para llamadas API")
+Rel(mapView, signalrClient, "Escucha eventos: RecibirAlerta, AlertaTomada")
+Rel(locationService, apiClient, "POST /api/patrulla/ubicacion")
+Rel(apiClient, scm, "Comunica con Backend (API + SignalR)")
+
+SHOW_LEGEND()
+@enduml

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Color para las notificaciones de emergencia -->
+    <color name="notification_color">#FF0000</color>
+    
+    <!-- Otros colores para la aplicación -->
+    <color name="primary_color">#2196F3</color>
+    <color name="accent_color">#FF5722</color>
+    <color name="background_color">#FFFFFF</color>
+</resources>

@@ -1,0 +1,22 @@
+name: Deploy backend on push
+
+on:
+  push:
+    branches:
+      - main   
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy via SSH
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: 3.144.192.50    # ip
+        username: ubuntu      # usuario
+        key: ${{ secrets.KEY_CONECT_SERVER_AUTO }}
+        script: |
+          cd ~/SAVIMF-backend/backend_alert_csharp/out
+          git pull
+          dotnet build
+          sudo systemctl restart backend_alert.service

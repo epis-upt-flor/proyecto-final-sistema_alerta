@@ -1,0 +1,147 @@
+@startuml Components_System_Extended
+title Diagrama de Componentes (Sistema completo - Dispositivo, TTS, Backend, Web, Móvil)
+
+' Actors
+actor "Víctima" as Victima
+actor "Patrullero" as Patrullero
+actor "Operador" as Operador
+actor "Administrador" as Admin
+
+'=========================
+' Dispositivo (Proyecto: SAVIMF-dispositivo)
+'=========================
+package "Dispositivo Autónomo (TTGO/ESP32)" as Dispositivo {
+  [MCU (TTGO ESP32)] as MCU
+  [GPS (TinyGPSPlus)] as GPS
+  [LoRa Module (LMIC)] as LoRa
+  [AXP PMU / Batería] as Bateria
+  [Botón / Trigger] as Boton
+  MCU --> GPS : lectura
+  MCU --> LoRa : uplink (GPS, bateria, payload)
+  MCU --> Bateria : estado_bateria
+  Boton --> MCU : activa_alerta
+}
+
+'=========================
+' The Things Stack (TTS) - Red LoRaWAN
+'=========================
+package "The Things Stack (TTS)" as TTS {
+  [Gateway / NS / AS] as TTS_AS
+}
+
+'=========================
+' Servidor Central (Backend) - (Proyecto: SAVIMF-backend)
+'=========================
+package "Servidor Central (Backend)" as Backend {
+  rectangle "Ingesta / API" {
+    [Webhook Processor
+     (/api/alerta/lorawan-webhook)] as Webhook
+    [REST API
+     (/api/device, /api/patrulla, /api/alerta)] as ApiRest
+    [SignalR Hub
+     AlertaHub] as SignalRHub
+  }
+
+  rectangle "Servicios" {
+    [AlertaService] as AlertaSvc
+    [PatrullaService] as PatrullaSvc
+    [TTSDeviceService
+     (client para TTS API)] as TtsSvc
+    [FirebaseAuthService
+     (verifica ID tokens)] as AuthSvc
+  }
+
+  rectangle "Persistencia / Repos" {
+    [AlertaRepositoryFirestore] as RepoAlerta
+    [PatrullaRepositoryFirestore] as RepoPatrulla
+    [UserRepositoryFirestore] as RepoUser
+  }
+
+  rectangle "Operaciones / Infra" {
+    [Background Worker / Retry Queue] as Worker
+    [Logging / Monitoring] as Observability
+  }
+}
+
+'=========================
+' Persistencia y Secrets
+'=========================
+[Cloud Firestore] as Firestore
+[Firebase Service Account (secret)] as FirebaseSecret
+[Google Maps API] as MapsAPI
+
+'=========================
+' Cliente Móvil (Proyecto: SAVIMF-app)
+'=========================
+package "App Móvil (Patrullero)" as AppMovil {
+  [UI: Alertas / Mapa] as MobileUI
+  [Firebase Auth (cliente)] as MobileAuth
+  [SignalR Client] as MobileSignalR
+  MobileUI --> MobileSignalR : recibe_eventos
+  MobileUI --> ApiRest : solicita_datos / envia_ubicacion
+  MobileAuth --> ApiRest : proporciona_ID_token
+}
+
+'=========================
+' Web Dashboard (Proyecto: SAVIMF-web)
+'=========================
+package "Dashboard Web" as Dashboard {
+  [UI: Monitor / Gestión] as WebUI
+  [Firebase Auth (cliente)] as WebAuth
+  [SignalR Client] as WebSignalR
+  [Device Management UI] as DeviceUI
+  WebUI --> WebSignalR : recibe_eventos
+  WebUI --> ApiRest : administra / consulta
+  DeviceUI --> ApiRest : registra_device (DevEUI)
+}
+
+'=========================
+' Flujos principales (resumidos)
+'=========================
+Victima --> Boton : presiona / activa_alerta
+MCU --> TTS_AS : uplink LoRa (payload)
+TTS_AS --> Webhook : webhook POST (uplink)
+Webhook --> AlertaSvc : decodifica_payload(), extrae_gps()
+AlertaSvc --> RepoAlerta : guardar_alerta()
+AlertaSvc --> SignalRHub : publicar("RecibirAlerta")
+
+ApiRest --> AlertaSvc : endpoints (tomar alerta, cambiar estado)
+ApiRest --> RepoPatrulla : guardar_ubicacion()
+ApiRest --> TtsSvc : registrar_device() / consultar_devices()
+
+' Realtime
+SignalRHub <--> MobileSignalR : push eventos
+SignalRHub <--> WebSignalR : push eventos
+
+' Autenticación
+MobileAuth --> FirebaseSecret : obtiene_ID_token (cliente)
+WebAuth --> FirebaseSecret : obtiene_ID_token (cliente)
+ApiRest --> AuthSvc : valida_token(Authorization)
+AuthSvc --> FirebaseSecret : valida_con_credenciales
+
+' Persistencia mappings
+RepoAlerta --> Firestore : colección "alertas"
+RepoPatrulla --> Firestore : colección "patrullas"
+RepoUser --> Firestore : colección "usuarios" / "dispositivos"
+
+' Infra ops
+Worker --> AlertaSvc : reintentos / procesamientos_async
+note right of Observability
+  captura_events / métricas
+end note
+
+' Integraciones opcionales
+ApiRest ..> MapsAPI : (opcional) geocoding / mapa tiles
+MobileUI ..> MapsAPI
+WebUI ..> MapsAPI
+
+note bottom
+  Este diagrama agrupa los componentes principales de los cuatro proyectos.
+  - Dispositivo: firmware (PlatformIO, LMIC, TinyGPSPlus, AXP PMU).
+  - Backend: ASP.NET Core (webhooks, SignalR, Firestore repos, Firebase Admin).
+  - Web: React + SignalR + Firebase Auth.
+  - Móvil: Flutter + SignalR + Firebase Auth.
+  IMPORTANTE: mover `sis-alert-firebase-admin.json` fuera del repo y usar Secret Manager.
+end note
+
+@enduml

@@ -1,0 +1,24 @@
+@startuml DeviceDiagram
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+LAYOUT_LEFT_RIGHT()
+
+Person(victim, "Víctima / Usuario")
+System_Boundary(deviceSys, "Dispositivo Autónomo (TTGO T-Beam)"){
+  Component(ttgo, "ESP32 (TTGO T-Beam)", "MCU", "Ejecuta firmware: LMIC, GPS parsing, PMU control")
+  Component(gps, "Módulo GPS (TinyGPSPlus)", "Hardware", "Obtiene coordenadas cuando se activa")
+  Component(pmu, "AXP202 PMU", "Hardware", "Gestión de batería y lectura de voltaje")
+  Component(button, "Botón físico", "Input", "Activa la captura de GPS y envío")
+  Component(led, "LED de confirmación", "Output", "Retroalimentación visual al usuario")
+  Component(lora, "Radio LoRa (LMIC)", "Stack LoRaWAN", "Envía uplinks hacia la red LoRaWAN (TTS)")
+}
+
+Rel(victim, button, "Presiona para activar alerta")
+Rel(button, ttgo, "Interrupción: inicia rutina de alerta")
+Rel(ttgo, gps, "Solicita coordenadas (getGPSCoordinates)")
+Rel(ttgo, pmu, "Lee batería (readBattery)")
+Rel(ttgo, lora, "Envía payload JSON (GPS+Bateria) via LMIC_setTxData2")
+Rel(ttgo, led, "Blink para confirmar envío/join")
+Rel(lora, tts, "Uplink a The Things Stack (TTS)")
+
+SHOW_LEGEND()
+@enduml

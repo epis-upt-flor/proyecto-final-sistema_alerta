@@ -1,0 +1,33 @@
+@startuml SystemContext
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+LAYOUT_WITH_LEGEND()
+
+Person(victim, "Víctima / Usuario", "Persona que activa la alerta mediante el dispositivo físico")
+Person(patrol, "Patrullero / Unidad de Respuesta", "Personal que recibe alertas en la app de patrulla")
+Person(operator, "Operador / Central", "Operador que supervisa alertas desde el dashboard web")
+
+System_Boundary(sisal, "SISALERT - Sistema Central de Monitoreo"){
+  System_Ext(tts, "The Things Stack (TTS)", "Red/Aplicación LoRaWAN que recibe uplinks desde dispositivos y reenvía webhooks")
+  System_Ext(firebase, "Firebase", "Firebase Authentication (clientes) y Firestore (usado por el Backend para datos)")
+  System(scm, "Servidor Central de Monitoreo (Backend)", "ASP.NET Web API + SignalR — procesa webhooks TTS, guarda en Firestore y notifica a clientes")
+  System(web, "Aplicación Web (Dashboard)", "React web app para operadores, muestra mapa y gestión de dispositivos")
+  System(mobile, "Aplicación Móvil (Patrulla)", "App Flutter para patrulleros, muestra alertas en tiempo real y reporta ubicación")
+  System(device, "Dispositivo Autónomo LoRaWAN", "TTGO/ESP32 con GPS, batería y radio LoRaWAN")
+}
+
+Rel(victim, device, "Presiona botón para activar alerta")
+Rel(device, tts, "Transmite paquete LoRaWAN (uplink)")
+Rel(tts, scm, "Webhook: reenvía uplinks / mensajes decodificados")
+Rel(scm, firebase, "Lee/Escribe perfiles, alertas, ubicaciones")
+Rel(scm, web, "API + SignalR: Notifica alertas y sirve datos")
+Rel(scm, mobile, "API + SignalR: Notifica alertas y recibe ubicaciones")
+Rel(web, firebase, "Autentica usuarios (Firebase Auth)")
+Rel(mobile, firebase, "Autentica usuarios (Firebase Auth)")
+
+Boundary(spaces, "Externos"){
+  Rel(operator, web, "Usa dashboard")
+  Rel(patrol, mobile, "Usa app de patrulla")
+}
+
+SHOW_LEGEND()
+@enduml
